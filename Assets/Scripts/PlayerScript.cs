@@ -1,5 +1,6 @@
 using System; // Import standard .NET system types (not strictly needed here but common in C# files)
 using UnityEngine; // Import Unity-specific classes like MonoBehaviour, GameObject, Collider, and print
+using TMPro; // Import TextMeshPro namespace for advanced text handling (not used in this script but often included in Unity projects for UI text)
 
 public class PlayerScript : MonoBehaviour
 {
@@ -10,6 +11,14 @@ public class PlayerScript : MonoBehaviour
 
     [SerializeField]
     int targetScore = 0; // The goal score required to complete a task, editable from the Unity Inspector
+
+    [SerializeField]
+    TextMeshProUGUI scoreText; // Reference to the UI text element that displays the player's score
+
+    void Start()
+    {
+        scoreText.text = "Score: " + playerScore; // Initialize the score display to show the starting score of 0 when the game begins
+    }
 
     void OnInteract() // Custom interaction method called when the player performs an interact action
     {
@@ -25,6 +34,7 @@ public class PlayerScript : MonoBehaviour
             {
                 playerScore += collScript.collectibleScore; // Add the collectible's score value to the player's total score
                 print("Player has collected " + playerScore + " points"); // Print the updated score to the console for debugging or feedback
+                scoreText.text = "Score: " + playerScore; // Update the on-screen score display to reflect the new score after collecting an item
                 Destroy(currentCollectible); // Remove the collectible object from the scene after it has been collected
                 currentCollectible = null; // Clear the reference so the player no longer has an active collectible selected
             }
