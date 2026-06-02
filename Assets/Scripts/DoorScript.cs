@@ -5,7 +5,7 @@ public class DoorScript : MonoBehaviour
 {
     Animator myAnimator;
 
-    bool isOpen = false; // Track whether the door is currently open or closed
+    bool isOpen = false;
 
     void Start()
     {
@@ -14,14 +14,14 @@ public class DoorScript : MonoBehaviour
 
     public void Interact()
     {
-        if(myAnimator != null)
+        if(isOpen)
         {
-            if(isOpen)
-                myAnimator.SetTrigger("CloseDoor");
-            else
-                myAnimator.SetTrigger("OpenDoor");
-
-            isOpen = !isOpen;
+            myAnimator.SetTrigger("CloseDoor");
         }
+        else
+        {
+            myAnimator.SetTrigger("OpenDoor");
+        }
+        isOpen = !isOpen;
     }
 }

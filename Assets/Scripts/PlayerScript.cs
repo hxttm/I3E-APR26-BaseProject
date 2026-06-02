@@ -6,7 +6,7 @@ public class PlayerScript : MonoBehaviour
 {
     CollectibleScript currentCollectible; // Store the collectible object the player is currently able to interact with
 
-    DoorScript currentDoor; // Store the door object the player is currently able to interact with 
+    DoorScript currentDoor;
 
     int playerScore = 0; // Keep track of how many points the player has collected so far
 
@@ -36,14 +36,9 @@ public class PlayerScript : MonoBehaviour
             //return; // Exit the method early because we cannot safely collect the item without the script
         }
 
-        if(currentDoor != null) // Only interact with a door if the player is currently near one
+        if(currentDoor != null) // Check if the player is currently near a door they can interact with
         {
-            currentDoor.Interact(); // Call the Interact method on the door script to toggle its open/close state
-        }
-        else
-        {
-            print("Error: No DoorScript found"); // Log an error in the Unity Console if the door is missing its data component
-            //return; // Exit the method early because we cannot safely interact with the door without the script
+            currentDoor.Interact(); // Call the Interact method on the door script to toggle its open/closed state
         }
     }
 
@@ -54,9 +49,9 @@ public class PlayerScript : MonoBehaviour
             currentCollectible = other.GetComponentInParent<CollectibleScript>(); // Store the collectible script so the player can interact with it later
         }
 
-        if(other.gameObject.tag == "Door")
+        if(other.gameObject.tag == "Door") // Check if the object entering the trigger is tagged as a door
         {
-            currentDoor = other.GetComponentInParent<DoorScript>(); // Store the door script so the player can interact with it later
+            currentDoor = other.GetComponentInParent<DoorScript>(); // Get the DoorScript component from the parent of the collider
         }
 
         if(other.gameObject.tag == "GoalArea" && playerScore >= targetScore) // Check if the player entered the goal area and has enough points
@@ -72,9 +67,9 @@ public class PlayerScript : MonoBehaviour
             currentCollectible = null; // Clear the current collectible because it is no longer in range
         }
 
-        if(other.gameObject.GetComponentInParent<DoorScript>() == currentDoor)
+        if(other.gameObject.GetComponentInParent<DoorScript>() == currentDoor) // If the door leaving the trigger is the one we were tracking
         {
-            currentDoor = other.GetComponentInParent<DoorScript>(); // Store the door script so the player can interact with it later
+            currentDoor = null; // Clear the current door because it is no longer in range
         }
     }
 
