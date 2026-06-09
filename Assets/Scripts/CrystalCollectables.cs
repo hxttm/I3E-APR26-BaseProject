@@ -6,7 +6,16 @@ public class CrystalCollectables : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.Instance.CollectCrystal();
+            Debug.Log("player hit crystal");
+
+            if (GameManager.Instance == null)
+            {
+                Debug.LogError("GameManager is NULL");
+            }
+            else
+            {
+                GameManager.Instance.CollectCrystal();
+            }
 
             Destroy(gameObject);
         }

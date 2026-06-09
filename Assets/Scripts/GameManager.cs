@@ -6,7 +6,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int crystalCount = 0;
-    public int requiredCrystals = 10;
 
     public TMP_Text crystalText;
 
@@ -15,19 +14,22 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        UpdateUI();
-    }
-
     public void CollectCrystal()
     {
         crystalCount++;
+
+        Debug.Log("Crystal Count = " + crystalCount);
+
         UpdateUI();
     }
 
-    void UpdateUI()
+void UpdateUI()
+{
+    if (crystalText == null)
     {
-        crystalText.text = "Crystals: " + crystalCount + "/" + requiredCrystals;
+        Debug.LogError("UI TEXT NOT ASSIGNED!");
+        return;
     }
+
+    crystalText.text = "Crystals: " + crystalCount + "/10";
 }
