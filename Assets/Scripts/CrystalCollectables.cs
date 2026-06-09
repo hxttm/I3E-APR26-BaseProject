@@ -1,33 +1,14 @@
 using UnityEngine;
-using TMPro;
 
-public class GameManager : MonoBehaviour
+public class CrystalCollectables : MonoBehaviour
 {
-    public static GameManager Instance;
-
-    public int crystalCount = 0;
-    public int requiredCrystals = 10;
-
-    public TMP_Text crystalText;
-
-    private void Awake()
+    private void OnTriggerEnter(Collider other)
     {
-        Instance = this;
-    }
+        if (other.CompareTag("Player"))
+        {
+            GameManager.Instance.CollectCrystal();
 
-    private void Start()
-    {
-        UpdateUI();
-    }
-
-    public void CollectCrystal()
-    {
-        crystalCount++;
-        UpdateUI();
-    }
-
-    void UpdateUI()
-    {
-        crystalText.text = "Crystals: " + crystalCount + "/" + requiredCrystals;
+            Destroy(gameObject);
+        }
     }
 }
