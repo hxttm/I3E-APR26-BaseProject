@@ -2,35 +2,61 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour
 {
-    public int gemCost = 3;
-    public int crystalReward = 5;
-
     private bool playerNearby = false;
     private bool opened = false;
 
-    private Renderer chestRenderer;
+    public Renderer chestRenderer;
 
-    void Start()
-    {
-        chestRenderer = GetComponent<Renderer>();
-    }
+    [Header("Gem Settings")]
+    public GameObject gemPrefab;
+    public Transform spawnPoint;
 
     void Update()
     {
         if (playerNearby && !opened && Input.GetKeyDown(KeyCode.O))
         {
-            if (GameManager.Instance.gemCount >= gemCost)
-            {
-                GameManager.Instance.gemCount -= gemCost;
-                GameManager.Instance.AddCrystal(crystalReward);
+            OpenChest();
+        }
+    }
 
-                opened = true;
+    void OpenChest()
+    {
+        opened = true;
 
-                chestRenderer.material.color = Color.gray;
-            }
-            else
+        // 💰 give +5 crystals
+        GameManager.Instance.AddCrystals(5);
+
+        // 💎 spawn 3 gems
+        SpawnGems();
+
+        // 🎨 visual change
+        if (chestRenderer != null)
+        {
+            chestRenderer.material.color = Color.gray;
+        }
+    }
+
+    void SpawnGems()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 offset = new Vector3(
+                Random.Range(-0.4f, 0.4f),
+                0.5f,
+                Random.Range(-0.4f, 0.4f)
+            );
+
+            GameObject gem = Instantiate(
+                gemPrefab,
+                spawnPoint.position + offset,
+                Quaternion.identity
+            );
+
+            // optional: pop-up force
+            Rigidbody rb = gem.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                Debug.Log("Not enough gems!");
+                rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
             }
         }
     }
