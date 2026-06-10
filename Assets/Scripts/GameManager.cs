@@ -1,35 +1,64 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public TMP_Text crystalText;
     public int crystalCount = 0;
 
-    public TMP_Text crystalText;
-
-    private void Awake()
+    void Awake()
     {
         Instance = this;
     }
 
-    public void CollectCrystal()
+    void Start()
     {
-        crystalCount++;
-
-        Debug.Log("Crystal Count = " + crystalCount);
-
         UpdateUI();
     }
 
-void UpdateUI()
-{
-    if (crystalText == null)
+    public void AddCrystal()
     {
-        Debug.LogError("UI TEXT NOT ASSIGNED!");
-        return;
+        crystalCount++;
+        UpdateUI();
     }
 
-    crystalText.text = "Crystals: " + crystalCount + "/10";
+    void UpdateUI()
+    {
+        crystalText.text = "Crystal Count: " + crystalCount + "/10";
+    }
+}
+
+
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance;
+
+    public TMP_Text crystalText;
+
+    public int crystalCount = 0;
+    public int gemCount = 0;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        UpdateUI();
+    }
+
+    public void AddCrystal(int amount)
+    {
+        crystalCount += amount;
+        UpdateUI();
+    }
+
+    void UpdateUI()
+    {
+        crystalText.text = "Crystal Count: " + crystalCount + "/10";
+    }
 }
