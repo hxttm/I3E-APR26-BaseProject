@@ -1,6 +1,6 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI; // Required for using UI Images
+using TMPro;
+using UnityEngine.UI; // REQUIRED to control UI Image components!
 
 public class GameManager : MonoBehaviour
 {
@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     [Header("UI References")]
     public TMP_Text crystalText;
-    public Image wingsInventoryIcon; // Drag your UI Wing Image here!
+    public Image wingsInventoryIcon; // Drag your 'WingsIcon' object here!
 
     [Header("Player Stats")]
     public int crystalCount = 0;
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // Call this function when the player successfully picks up the wings
+    // This is called automatically by RaycastWingPickup when you press E!
     public void EquipWingsToInventory()
     {
         hasWingsInInventory = true;
@@ -51,10 +51,13 @@ public class GameManager : MonoBehaviour
 
     public void UpdateUI()
     {
+        // 1. Update the Gem counter text
         if (crystalText != null)
-            crystalText.text = "Crystal Count: " + crystalCount + "/10";
+        {
+            crystalText.text = "Crystal Count: " + crystalCount + "/3";
+        }
 
-        // If we have the wings, show the icon. Otherwise, keep it hidden/faded!
+        // 2. Turn on the inventory icon if the player has the wings!
         if (wingsInventoryIcon != null)
         {
             wingsInventoryIcon.gameObject.SetActive(hasWingsInInventory);

@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 7755045464978633224}
   - component: {fileID: 3172556890916116052}
   - component: {fileID: 2241817737662924144}
+  - component: {fileID: 4458652251389982308}
   m_Layer: 0
   m_Name: Chest (2)
   m_TagString: Untagged
@@ -336,6 +337,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4458652251389982308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4827140727363793317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 277dce3c9d57dea4c9432b87159f0ab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaycastWingChest
+  chestLid: {fileID: 0}
+  spawnPoint: {fileID: 0}
+  wingsPrefab: {fileID: 0}
+  cost: 5
+  openAngle: -90
+  openSpeed: 5
 --- !u!1 &5007644978820133662
 GameObject:
   m_ObjectHideFlags: 0
