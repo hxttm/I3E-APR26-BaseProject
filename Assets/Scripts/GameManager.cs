@@ -1,12 +1,18 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI; // Required for using UI Images
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [Header("UI References")]
     public TMP_Text crystalText;
+    public Image wingsInventoryIcon; // Drag your UI Wing Image here!
+
+    [Header("Player Stats")]
     public int crystalCount = 0;
+    public bool hasWingsInInventory = false;
 
     void Awake()
     {
@@ -15,7 +21,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -30,11 +35,17 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // ADD THIS: Helper method to safely deduct crystals
     public void RemoveCrystals(int amount)
     {
         crystalCount -= amount;
-        if (crystalCount < 0) crystalCount = 0; // Prevent going into negative numbers
+        if (crystalCount < 0) crystalCount = 0;
+        UpdateUI();
+    }
+
+    // Call this function when the player successfully picks up the wings
+    public void EquipWingsToInventory()
+    {
+        hasWingsInInventory = true;
         UpdateUI();
     }
 
@@ -42,5 +53,11 @@ public class GameManager : MonoBehaviour
     {
         if (crystalText != null)
             crystalText.text = "Crystal Count: " + crystalCount + "/10";
+
+        // If we have the wings, show the icon. Otherwise, keep it hidden/faded!
+        if (wingsInventoryIcon != null)
+        {
+            wingsInventoryIcon.gameObject.SetActive(hasWingsInInventory);
+        }
     }
 }
