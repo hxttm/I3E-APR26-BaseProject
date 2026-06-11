@@ -4,7 +4,6 @@ public class RaycastWingPickup : Interactable
 {
     void Update()
     {
-        // Listen for the Q key if the player is actively looking at the dropped wings
         if (PlayerInteraction.CurrentTarget == this && Input.GetKeyDown(KeyCode.Q))
         {
             OnInteract();

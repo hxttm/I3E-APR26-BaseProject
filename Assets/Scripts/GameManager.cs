@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // This is called automatically by RaycastWingPickup when you press E!
+    // This is called automatically by RaycastWingPickup when you press Q!
     public void EquipWingsToInventory()
     {
         hasWingsInInventory = true;
@@ -51,10 +51,10 @@ public class GameManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        // 1. Update the Gem counter text
+        // 1. Update the Gem counter text out of 10
         if (crystalText != null)
         {
-            crystalText.text = "Crystal Count: " + crystalCount + "/3";
+            crystalText.text = "Crystal Count: " + crystalCount + "/10";
         }
 
         // 2. Turn on the inventory icon if the player has the wings!
