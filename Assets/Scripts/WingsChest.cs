@@ -1,87 +1,172 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.UI; // REQUIRED to change UI Images!
 
-public class WingsJems : MonoBehaviour
+public class WingChest : MonoBehaviour
 {
-    [Header("Canvas UI Reference")]
-    public GameObject canvasWingsObject; // Drag your Wings Canvas text here!
-    public TMPro.TextMeshProUGUI promptText; // Optional: Drag the text component here to change the words dynamically!
+    [Header("Chest Parts")]
+    public Transform chestLid;
+    public Transform spawnPoint;
 
-    [Header("Inventory Settings")]
-    public GameObject wingsInventoryIcon; // Drag your UI icon here!
+    [Header("Physics Settings")]
+    [Tooltip("If true, the lid will fly off using physics. If false, it opens smoothly.")]
+    public bool lidFallsOffWithPhysics = true; 
+
+    [Header("Spawn Settings")]
+    public GameObject wingsPrefab; 
+
+    [Header("Canvas UI Reference")]
+    public GameObject canvasWingsText; 
+
+    [Header("Inventory UI Reference")]
+    [Tooltip("Drag the grey Wing Image slot from your main Canvas here.")]
+    public GameObject inventoryWingSlotImage; 
+
+    // --- NEW: ADD THIS FOR THE ARTWORK ---
+    [Header("Wings Sprite Art")]
+    [Tooltip("Drag your actual Steampunk Wings icon/sprite texture here.")]
+    public Sprite wingsIconSprite; 
 
     private bool playerIsClose = false;
-    private bool unlocked = false;
-    private bool collected = false;
+    private bool opened = false;
+    private bool isOpening = false;
+
+    private float openAngle = 90f; 
+    private float openSpeed = 5f;
+    private Quaternion openRotation;
+    
+    private PlayerHealth targetPlayerHealth; 
 
     void Start()
     {
-        if (canvasWingsObject != null) canvasWingsObject.SetActive(false);
-        if (wingsInventoryIcon != null) wingsInventoryIcon.SetActive(false);
+        if (chestLid != null && !lidFallsOffWithPhysics)
+            openRotation = Quaternion.Euler(openAngle, 0f, 0f);
+
+        if (canvasWingsText != null)
+            canvasWingsText.SetActive(false);
+
+        if (inventoryWingSlotImage != null)
+            inventoryWingSlotImage.SetActive(false);
     }
 
     void Update()
     {
-        if (!playerIsClose) return;
-
-        // STEP 1: Press O to unlock/open for 3 jems
-        if (!unlocked && Input.GetKeyDown(KeyCode.O))
+        if (isOpening && chestLid != null && !lidFallsOffWithPhysics)
         {
-            TryUnlockWings();
+            chestLid.localRotation = Quaternion.Slerp(chestLid.localRotation, openRotation, Time.deltaTime * openSpeed);
+            if (Quaternion.Angle(chestLid.localRotation, openRotation) < 1f)
+            {
+                chestLid.localRotation = openRotation;
+                isOpening = false;
+            }
         }
-        // STEP 2: Press Q to pick up into inventory
-        else if (unlocked && !collected && Input.GetKeyDown(KeyCode.Q))
+
+        if (playerIsClose && !opened && !isOpening && targetPlayerHealth != null)
         {
-            CollectWings();
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                TryOpenWingChest();
+            }
         }
     }
 
-    private void TryUnlockWings()
+    private void TryOpenWingChest()
     {
-        if (GameManager.Instance == null || GameManager.Instance.crystalCount < 3) return;
+        if (GameManager.Instance == null) return;
+
+        if (GameManager.Instance.crystalCount < 3)
+        {
+            Debug.Log("Not enough gems to open the steampunk wings chest!");
+            return;
+        }
 
         GameManager.Instance.RemoveCrystals(3);
-        unlocked = true;
+        
+        opened = true;
+        isOpening = true;
 
-        // Change text prompt to tell the player to press Q
-        if (promptText != null)
+        if (canvasWingsText != null)
+            canvasWingsText.SetActive(false);
+
+        if (lidFallsOffWithPhysics && chestLid != null)
         {
-            promptText.text = "Press 'Q' to take Wings";
+            PopLidOff();
         }
+
+        UnlockAndPopWings();
     }
 
-    private void CollectWings()
+    private void PopLidOff()
     {
-        collected = true;
+        chestLid.transform.SetParent(null); 
 
-        if (canvasWingsObject != null) canvasWingsObject.SetActive(false);
-        if (wingsInventoryIcon != null) wingsInventoryIcon.SetActive(true);
-
-        // Tell WingsPickUp that the player has the wings and can now use 'F' to fly!
-        WingsPickUp pickup = GetComponent<WingsPickUp>();
-        if (pickup != null)
+        Rigidbody lidRb = chestLid.gameObject.GetComponent<Rigidbody>();
+        if (lidRb == null)
         {
-            pickup.UnlockFlightAccess();
+            lidRb = chestLid.gameObject.AddComponent<Rigidbody>();
         }
 
-        // Hide the world model mesh, keeping the scripts alive
-        if (GetComponent<MeshRenderer>() != null) GetComponent<MeshRenderer>().enabled = false;
+        lidRb.AddForce(new Vector3(0f, 4f, -3f), ForceMode.Impulse);
+        lidRb.AddTorque(new Vector3(Random.Range(-5f, 5f), 0f, 0f), ForceMode.Impulse);
+    }
+
+    private void UnlockAndPopWings()
+    {
+        targetPlayerHealth.UnlockFlightAccess();
+
+        // Show the slot object
+        if (inventoryWingSlotImage != null)
+        {
+            inventoryWingSlotImage.SetActive(true);
+
+            // --- NEW: SWAP THE GREY BOX FOR THE ART ---
+            Image uiImageComponent = inventoryWingSlotImage.GetComponent<Image>();
+            if (uiImageComponent != null && wingsIconSprite != null)
+            {
+                uiImageComponent.sprite = wingsIconSprite; // Replaces the grey box with your art!
+                uiImageComponent.color = Color.white;    // Ensures it isn't tinted dark/grey
+            }
+        }
+
+        if (wingsPrefab != null && spawnPoint != null)
+        {
+            GameObject spawnedWings = Instantiate(wingsPrefab, spawnPoint.position, Quaternion.identity);
+            
+            Rigidbody rb = spawnedWings.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(new Vector3(0f, 6f, 1.5f), ForceMode.Impulse);
+            }
+        }
+        
+        Debug.Log("Steampunk wings popped up and UI image updated!");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.gameObject.name == "PlayerCapsule")
         {
             playerIsClose = true;
-            if (canvasWingsObject != null) canvasWingsObject.SetActive(true);
+            targetPlayerHealth = other.GetComponent<PlayerHealth>();
+
+            if (!opened && canvasWingsText != null)
+            {
+                canvasWingsText.SetActive(true); 
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.gameObject.name == "PlayerCapsule")
         {
             playerIsClose = false;
-            if (canvasWingsObject != null) canvasWingsObject.SetActive(false);
+            targetPlayerHealth = null; 
+
+            if (canvasWingsText != null)
+            {
+                canvasWingsText.SetActive(false); 
+            }
         }
     }
 }

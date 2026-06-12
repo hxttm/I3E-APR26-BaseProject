@@ -1,15 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
-using TMPro; // 1. CRITICAL: You must include this line at the top!
+using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
+    [Header("Health Settings")]
     public int maxHealth = 10;
     public int currentHealth;
 
     [Header("UI References")]
-    public GameObject healthBarContainer; // Your hearts layout
-    public TextMeshProUGUI healthText;    // 2. ADD THIS: Your TextMeshPro UI element
+    public GameObject healthBarContainer; 
+    public TextMeshProUGUI healthText;    
 
     private List<GameObject> heartObjects = new List<GameObject>();
 
@@ -19,11 +20,15 @@ public class PlayerHealth : MonoBehaviour
 
     private bool isDead = false;
 
+    [Header("Inventory States")]
+    // This is the variable the PlayerFlight script looks at!
+    public bool hasWingsInInventory = false; 
+
     void Start()
     {
         currentHealth = maxHealth;
         InitializeHearts();
-        UpdateHealthUI(); // This will update both hearts and text at start
+        UpdateHealthUI();
     }
 
     private void InitializeHearts()
@@ -50,8 +55,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damageAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         
-        UpdateHealthUI(); // Updates the UI right after taking damage
-
+        UpdateHealthUI();
         nextDamageTime = Time.time + damageCooldown;
 
         if (currentHealth <= 0)
@@ -62,13 +66,11 @@ public class PlayerHealth : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        // 3. NEW CODE: Update the TextMesh Pro text on screen!
         if (healthText != null)
         {
             healthText.text = "HP: " + currentHealth + "/" + maxHealth;
         }
 
-        // Keep your existing heart toggling code below
         if (heartObjects == null || heartObjects.Count == 0) return;
 
         for (int i = 0; i < heartObjects.Count; i++)
@@ -78,6 +80,13 @@ public class PlayerHealth : MonoBehaviour
                 heartObjects[i].SetActive(i < currentHealth);
             }
         }
+    }
+
+    // Called by WingChest when opened successfully
+    public void UnlockFlightAccess()
+    {
+        hasWingsInInventory = true;
+        Debug.Log("Wings added to inventory! PlayerFlight script is now unlocked.");
     }
 
     private void Die()

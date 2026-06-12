@@ -265,7 +265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1797655853656882769}
   - component: {fileID: 1631803585795109842}
-  - component: {fileID: 2584159617210850645}
+  - component: {fileID: 2366729952221491142}
   m_Layer: 3
   m_Name: WingChest
   m_TagString: Untagged
@@ -315,7 +315,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.715957, y: 1.7982522, z: 2.1546164}
   m_Center: {x: -0.22021127, y: 0.39912617, z: 0.5773083}
---- !u!114 &2584159617210850645
+--- !u!114 &2366729952221491142
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -326,9 +326,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cda58970fd6713747a1fc2e4ea76e28c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WingsJems
-  canvasWingsObject: {fileID: 0}
-  wingsInventoryIcon: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::WingChestAutomatic
+  chestLid: {fileID: 388973499408228745}
+  spawnPoint: {fileID: 625548880878440786}
+  wingsPrefab: {fileID: 4406173550036855388, guid: 8fddfd4cede8a644fbee670426d25dd9, type: 3}
 --- !u!1 &8157850502684305312
 GameObject:
   m_ObjectHideFlags: 0
