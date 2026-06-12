@@ -8382,8 +8382,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 10
-  currentHealth: 0
-  healthBarContainer: {fileID: 0}
+  currentHealth: 10
+  healthBarContainer: {fileID: 2100913264}
+  healthText: {fileID: 401728308}
   damageCooldown: 1
 --- !u!1 &1317968473 stripped
 GameObject:

@@ -1,14 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro; // 1. CRITICAL: You must include this line at the top!
 
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth = 10;
     public int currentHealth;
 
-    [Header("UI Reference")]
-    public GameObject healthBarContainer;
-    
+    [Header("UI References")]
+    public GameObject healthBarContainer; // Your hearts layout
+    public TextMeshProUGUI healthText;    // 2. ADD THIS: Your TextMeshPro UI element
+
     private List<GameObject> heartObjects = new List<GameObject>();
 
     [Header("Damage Cooldown")]
@@ -19,11 +21,9 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        // FORCE the current health to be equal to your max health at start
         currentHealth = maxHealth;
-        
         InitializeHearts();
-        UpdateHealthUI();
+        UpdateHealthUI(); // This will update both hearts and text at start
     }
 
     private void InitializeHearts()
@@ -31,19 +31,14 @@ public class PlayerHealth : MonoBehaviour
         if (healthBarContainer != null)
         {
             heartObjects.Clear();
-
-            // Loop through the layout components inside your Health Bar panel
             for (int i = 0; i < healthBarContainer.transform.childCount; i++)
             {
                 GameObject child = healthBarContainer.transform.GetChild(i).gameObject;
-                
-                // Skip background elements if there are any
                 if (!child.name.ToLower().Contains("bg") && !child.name.ToLower().Contains("background"))
                 {
                     heartObjects.Add(child);
                 }
             }
-            Debug.Log($"[UI Fix] Successfully mapped {heartObjects.Count} heart GameObjects!");
         }
     }
 
@@ -55,8 +50,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damageAmount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         
-        UpdateHealthUI();
-        Debug.Log("Ouch! Lost a heart. Current Hearts: " + currentHealth);
+        UpdateHealthUI(); // Updates the UI right after taking damage
 
         nextDamageTime = Time.time + damageCooldown;
 
@@ -68,13 +62,19 @@ public class PlayerHealth : MonoBehaviour
 
     private void UpdateHealthUI()
     {
+        // 3. NEW CODE: Update the TextMesh Pro text on screen!
+        if (healthText != null)
+        {
+            healthText.text = "HP: " + currentHealth + "/" + maxHealth;
+        }
+
+        // Keep your existing heart toggling code below
         if (heartObjects == null || heartObjects.Count == 0) return;
 
         for (int i = 0; i < heartObjects.Count; i++)
         {
             if (heartObjects[i] != null)
             {
-                // If the item index is less than your current health value, keep it active!
                 heartObjects[i].SetActive(i < currentHealth);
             }
         }
