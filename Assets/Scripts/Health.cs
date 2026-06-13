@@ -1,12 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using System.Collections;
 
 public class PlayerHealth : MonoBehaviour
 {
     [Header("Health Settings")]
     public int maxHealth = 10;
     public int currentHealth;
+
+    [Header("Regeneration Settings")]
+    public float regenDelay = 23f; 
+    private Coroutine regenCoroutine;
 
     [Header("UI References")]
     public GameObject healthBarContainer; 
@@ -21,7 +26,6 @@ public class PlayerHealth : MonoBehaviour
     private bool isDead = false;
 
     [Header("Inventory States")]
-    // This is the variable the PlayerFlight script looks at!
     public bool hasWingsInInventory = false; 
 
     void Start()
@@ -29,6 +33,8 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
         InitializeHearts();
         UpdateHealthUI();
+
+        regenCoroutine = StartCoroutine(RegenerateHealthRoutine());
     }
 
     private void InitializeHearts()
@@ -52,15 +58,50 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
         if (Time.time < nextDamageTime) return;
 
-        currentHealth -= damageAmount;
+        ApplyDamage(damageAmount);
+        nextDamageTime = Time.time + damageCooldown;
+    }
+
+    public void DamageFromFall()
+    {
+        if (isDead) return;
+        
+        ApplyDamage(2); 
+    }
+
+    private void ApplyDamage(int amount)
+    {
+        currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         
         UpdateHealthUI();
-        nextDamageTime = Time.time + damageCooldown;
 
         if (currentHealth <= 0)
         {
             Die();
+        }
+    }
+
+    // --- REGEN ROUTINE WITH ON-SCREEN MESSAGE ---
+    private IEnumerator RegenerateHealthRoutine()
+    {
+        while (!isDead)
+        {
+            yield return new WaitForSeconds(regenDelay);
+
+            if (currentHealth < maxHealth && !isDead)
+            {
+                currentHealth += 1;
+                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                
+                UpdateHealthUI();
+
+                // --- SEND MESSAGE TO YOUR GAME SCREEN ---
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.ShowFallWarning("time passed, wounds healed");
+                }
+            }
         }
     }
 
@@ -82,7 +123,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    // Called by WingChest when opened successfully
     public void UnlockFlightAccess()
     {
         hasWingsInInventory = true;
@@ -92,6 +132,10 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         isDead = true;
+        if (regenCoroutine != null)
+        {
+            StopCoroutine(regenCoroutine);
+        }
         Debug.Log("Player Died!");
     }
 }

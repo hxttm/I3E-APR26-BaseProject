@@ -5,19 +5,23 @@ public class Fly : MonoBehaviour
 {
     [Header("Flight Settings")]
     public float flySpeed = 5f;
-    private bool isFlying = false;
+    [Tooltip("How high (in meters) the player must be above the ground to activate flying.")]
+    public float minHeightToFly = 1.2f; 
+    
+    public bool isFlying = false;
 
     [Header("References")]
     private PlayerHealth playerHealth;
     private CharacterController characterController;
     private FirstPersonController fpController;
+    private FallDamage fallDamage; 
 
     void Start()
     {
-        // Gather all components on the player object
         playerHealth = GetComponent<PlayerHealth>();
         characterController = GetComponent<CharacterController>();
         fpController = GetComponent<FirstPersonController>();
+        fallDamage = GetComponent<FallDamage>();
 
         if (playerHealth == null) Debug.LogError("Fly: Missing PlayerHealth component!");
         if (characterController == null) Debug.LogError("Fly: Missing CharacterController component!");
@@ -28,10 +32,24 @@ public class Fly : MonoBehaviour
     {
         if (playerHealth == null || fpController == null || characterController == null) return;
 
-        // Verify the player has the wings unlocked in their PlayerHealth inventory data
         if (playerHealth.hasWingsInInventory && Input.GetKeyDown(KeyCode.F))
         {
-            ToggleFlight();
+            if (isFlying)
+            {
+                ToggleFlight();
+            }
+            else if (IsHighEnough())
+            {
+                ToggleFlight();
+            }
+            else
+            {
+                // --- ON-SCREEN WARNING ---
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.ShowFallWarning("Too close to the ground! Jump first.");
+                }
+            }
         }
 
         if (isFlying)
@@ -40,34 +58,58 @@ public class Fly : MonoBehaviour
         }
     }
 
+    private bool IsHighEnough()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            if (hit.distance >= minHeightToFly)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void ToggleFlight()
     {
         isFlying = !isFlying;
 
+        if (fallDamage != null)
+        {
+            fallDamage.isFlying = isFlying;
+        }
+
         if (isFlying)
         {
-            // Turn off the asset's normal movement script so it stops calculating gravity
-            fpController.enabled = false; 
-            Debug.Log("Take-off! (F) Normal movement paused. Use WASD to glide, Space to rise, Shift to sink.");
+            fpController.Gravity = 0f; 
+            characterController.Move(Vector3.zero);
+
+            // --- ON-SCREEN NOTIFICATION ---
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowFallWarning("Take-off successful!");
+            }
         }
         else
         {
-            // Turn the script back on to let the asset resume normal walking and gravity
-            fpController.enabled = true; 
-            Debug.Log("Landed! (F) Normal movement and gravity restored.");
+            fpController.Gravity = -15.0f; 
+
+            // --- ON-SCREEN NOTIFICATION ---
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowFallWarning("Landed smoothly.");
+            }
         }
     }
 
     private void HandleFlightMovement()
     {
-        // 1. Handle Horizontal Movement (WASD) manually while flying
-        float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
-        float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
+        float horizontal = Input.GetAxis("Horizontal"); 
+        float vertical = Input.GetAxis("Vertical");     
 
-        // Calculate directions relative to where the player's body is facing
         Vector3 moveDirection = (transform.forward * vertical) + (transform.right * horizontal);
 
-        // 2. Handle Vertical Movement (Space / Left Shift)
         if (Input.GetKey(KeyCode.Space))
         {
             moveDirection += Vector3.up;
@@ -77,7 +119,6 @@ public class Fly : MonoBehaviour
             moveDirection += Vector3.down;
         }
 
-        // 3. Apply the combined flight movement to the character controller
         characterController.Move(moveDirection.normalized * flySpeed * Time.deltaTime);
     }
 }
