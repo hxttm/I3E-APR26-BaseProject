@@ -22,7 +22,6 @@ public class WingChest : MonoBehaviour
     [Tooltip("Drag the grey Wing Image slot from your main Canvas here.")]
     public GameObject inventoryWingSlotImage; 
 
-    // --- NEW: ADD THIS FOR THE ARTWORK ---
     [Header("Wings Sprite Art")]
     [Tooltip("Drag your actual Steampunk Wings icon/sprite texture here.")]
     public Sprite wingsIconSprite; 
@@ -100,6 +99,7 @@ public class WingChest : MonoBehaviour
     {
         chestLid.transform.SetParent(null); 
 
+        // Safely fetch or add the Rigidbody variable component reference directly
         Rigidbody lidRb = chestLid.gameObject.GetComponent<Rigidbody>();
         if (lidRb == null)
         {
@@ -112,14 +112,16 @@ public class WingChest : MonoBehaviour
 
     private void UnlockAndPopWings()
     {
-        targetPlayerHealth.UnlockFlightAccess();
+        if (targetPlayerHealth != null)
+        {
+            targetPlayerHealth.UnlockFlightAccess();
+        }
 
         // Show the slot object
         if (inventoryWingSlotImage != null)
         {
             inventoryWingSlotImage.SetActive(true);
 
-            // --- NEW: SWAP THE GREY BOX FOR THE ART ---
             Image uiImageComponent = inventoryWingSlotImage.GetComponent<Image>();
             if (uiImageComponent != null && wingsIconSprite != null)
             {

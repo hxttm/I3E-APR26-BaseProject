@@ -1,49 +1,38 @@
 using UnityEngine;
 
-public class OrbProjectile : MonoBehaviour
+public class OrbFly : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float speed = 15f;
+    public float speed = 25f; 
     private Vector3 throwDirection;
     private bool isThrown = false;
 
-    // This is called automatically by your PlayerHealth script when you press 'T'
+    // Called automatically by PlayerHealth when you press T
     public void Launch(Vector3 direction)
     {
         throwDirection = direction.normalized;
         isThrown = true;
         
-        // Destroys the orb after 5 seconds if you miss, so it doesn't float forever
-        Destroy(gameObject, 5f); 
+        // Destroys the visual orb copy after 4 seconds so it doesn't clutter your hierarchy
+        Destroy(gameObject, 4f); 
     }
 
     void Update()
     {
         if (isThrown)
         {
-            // Moves the orb forward through the air over time
+            // Fly straight forward through 3D space
             transform.position += throwDirection * speed * Time.deltaTime;
         }
     }
 
+    // Clean impact: If it passes through anything, it simply cleans itself up
     private void OnTriggerEnter(Collider other)
     {
-        // 1. Try to find the PortalSystem script directly on the object hit
-        PortalSystem portal = other.GetComponent<PortalSystem>();
-        
-        // 2. If it wasn't on that specific part, check its parent object
-        if (portal == null)
+        // If it touches the portal structure, destroy the visual orb clone instantly on impact
+        if (other.name.Contains("Plane") || other.name.Contains("Portal"))
         {
-            portal = other.GetComponentInParent<PortalSystem>();
-        }
-
-        // 3. If we successfully found the portal, turn it green!
-        if (portal != null)
-        {
-            portal.ActivatePortalWithOrb();
-            
-            // Destroy the flying projectile copy so it disappears inside the portal
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 }

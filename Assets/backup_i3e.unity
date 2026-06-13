@@ -3931,6 +3931,7 @@ GameObject:
   - component: {fileID: 482341744}
   - component: {fileID: 482341743}
   - component: {fileID: 482341745}
+  - component: {fileID: 482341746}
   m_Layer: 0
   m_Name: Plane (1)
   m_TagString: Untagged
@@ -4028,8 +4029,21 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10.000006, y: 2.475786, z: 10.000002}
-  m_Center: {x: 0.000003873129, y: 0.31973827, z: 8.092358e-11}
+  m_Size: {x: 10.000006, y: 7.272249, z: 10.000002}
+  m_Center: {x: 0.0000038960347, y: 2.71797, z: 6.8804723e-10}
+--- !u!114 &482341746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482341740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5bfc1a3394de974dbb10453618cb7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalPlane
+  greenPortalMaterial: {fileID: 2100000, guid: 60a4a54ddab6a484dbf90cdf590c9ed0, type: 2}
 --- !u!1 &482435533 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3603752816905408927, guid: 33ff1d517851bd8429791134bba2bff0, type: 3}
@@ -9088,6 +9102,9 @@ MonoBehaviour:
   damageCooldown: 1
   hasWingsInInventory: 0
   hasGreenOrbInInventory: 0
+  inventoryOrbSlot: {fileID: 1101183110}
+  orbProjectilePrefab: {fileID: 1349547249}
+  throwSpawnPoint: {fileID: 330585546}
 --- !u!114 &1309554069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9153,6 +9170,46 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8828633754092000318, guid: ee6d3e8b153183f46935105f03eff982, type: 3}
   m_PrefabInstance: {fileID: 1992167016851122426}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1349547254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349547249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f7b93b2bf974394a81cb9575d26c230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrbProjectile
+  speed: 5
+--- !u!54 &1349547255
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1349547249}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1354755422 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3681790978099765340, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
@@ -11326,13 +11383,10 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1682696210}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1682696211}
     - targetCorrespondingSourceObject: {fileID: 6203264432929249339, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2144599408}
+      addedObject: {fileID: 2144599412}
     - targetCorrespondingSourceObject: {fileID: 8242711457820704425, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 664691059}
@@ -11354,20 +11408,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
   m_PrefabInstance: {fileID: 1682696208}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1682696210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1192745595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: beb626c076205a544b0ca259bef74263, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PortalSystem
-  portalPlaneRenderer: {fileID: 482341743}
-  greenPortalMaterial: {fileID: 2100000, guid: 60a4a54ddab6a484dbf90cdf590c9ed0, type: 2}
 --- !u!65 &1682696211
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11387,8 +11427,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 4.5022283, z: 1}
-  m_Center: {x: -0.0000021349797, y: 1.751103, z: -0}
+  m_Size: {x: 1, y: 4.5022283, z: 1.8389579}
+  m_Center: {x: -0.0000030886888, y: 1.751102, z: 0.41947892}
 --- !u!1 &1685914169 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7923280484660346795, guid: 33ff1d517851bd8429791134bba2bff0, type: 3}
@@ -14447,8 +14487,8 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6203264432929249339, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
   m_PrefabInstance: {fileID: 1682696208}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &2144599408
-BoxCollider:
+--- !u!64 &2144599412
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -14462,12 +14502,13 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.03781047, y: 0.008293641, z: 0.04085427}
-  m_Center: {x: -0.0000065086842, y: -0.00020397149, z: 0.02690157}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5628013574231025859, guid: 63567f3bf7d3c804f897c364c0bd4de0, type: 3}
 --- !u!1 &2146549528
 GameObject:
   m_ObjectHideFlags: 0
@@ -14723,7 +14764,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8828633754092000318, guid: ee6d3e8b153183f46935105f03eff982, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1349547254}
+    - targetCorrespondingSourceObject: {fileID: 8828633754092000318, guid: ee6d3e8b153183f46935105f03eff982, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1349547255}
   m_SourcePrefab: {fileID: 100100000, guid: ee6d3e8b153183f46935105f03eff982, type: 3}
 --- !u!1 &2114052299898496421 stripped
 GameObject:
@@ -14816,6 +14863,10 @@ PrefabInstance:
       propertyPath: orbPrefab
       value: 
       objectReference: {fileID: 1349547249}
+    - target: {fileID: 5686090865617541855, guid: 3edb79aaee16a784ba8a847f3853d8a9, type: 3}
+      propertyPath: promptText
+      value: 
+      objectReference: {fileID: 892635784}
     - target: {fileID: 5686090865617541855, guid: 3edb79aaee16a784ba8a847f3853d8a9, type: 3}
       propertyPath: spawnPoint
       value: 
@@ -17271,6 +17322,10 @@ PrefabInstance:
     - target: {fileID: 4166596191968237223, guid: fc13cc7adf454ae43aa6208bc7acff36, type: 3}
       propertyPath: attackRadius
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5503757706001113262, guid: fc13cc7adf454ae43aa6208bc7acff36, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -11.71
       objectReference: {fileID: 0}
     - target: {fileID: 5726172336969474551, guid: fc13cc7adf454ae43aa6208bc7acff36, type: 3}
       propertyPath: m_Name

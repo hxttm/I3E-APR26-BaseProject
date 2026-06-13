@@ -29,12 +29,12 @@ public class PlayerHealth : MonoBehaviour
     public bool hasWingsInInventory = false; 
     public bool hasGreenOrbInInventory = false; 
 
+    [Header("UI Inventory Reference")]
+    public GameObject inventoryOrbSlot;     
+
     [Header("Throw Settings")]
-    public GameObject orbProjectilePrefab; // Drag your 3D Orb prefab with the OrbProjectile script here
+    public GameObject orbProjectilePrefab; // Drag your 3D Orb prefab asset here
     public Transform throwSpawnPoint;       // Drag your Main Camera here
-    
-    // --- ADDED THIS SLOT SO THE PLAYER CAN TURN IT OFF WHEN THROWN ---
-    public GameObject inventoryOrbSlot;     // Drag your UI Inventory Orb Image slot here
 
     void Start()
     {
@@ -47,35 +47,10 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
-        // If the player has the orb and presses T, throw it!
+        // If the player has the orb and presses T, throw it out!
         if (hasGreenOrbInInventory && Input.GetKeyDown(KeyCode.T))
         {
             ThrowOrb();
-        }
-    }
-
-    private void ThrowOrb()
-    {
-        if (orbProjectilePrefab != null && throwSpawnPoint != null)
-        {
-            // Remove the orb from inventory data so you can only throw it once
-            hasGreenOrbInInventory = false;
-
-            // --- TURNS OFF THE VISUAL ICON AUTOMATICALLY ON THROW ---
-            if (inventoryOrbSlot != null)
-            {
-                inventoryOrbSlot.SetActive(false);
-            }
-
-            // Spawn the orb at the camera position
-            GameObject thrownOrb = Instantiate(orbProjectilePrefab, throwSpawnPoint.position, throwSpawnPoint.rotation);
-            
-            // Launch it straight forward from where the camera is looking
-            OrbProjectile projectileScript = thrownOrb.GetComponent<OrbProjectile>();
-            if (projectileScript != null)
-            {
-                projectileScript.Launch(throwSpawnPoint.forward);
-            }
         }
     }
 
@@ -107,7 +82,6 @@ public class PlayerHealth : MonoBehaviour
     public void DamageFromFall()
     {
         if (isDead) return;
-        
         ApplyDamage(2); 
     }
 
@@ -115,7 +89,6 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        
         UpdateHealthUI();
 
         if (currentHealth <= 0)
@@ -134,7 +107,6 @@ public class PlayerHealth : MonoBehaviour
             {
                 currentHealth += 1;
                 currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-                
                 UpdateHealthUI();
 
                 if (UIManager.Instance != null)
@@ -183,5 +155,46 @@ public class PlayerHealth : MonoBehaviour
             StopCoroutine(regenCoroutine);
         }
         Debug.Log("Player Died!");
+    }
+
+    private void ThrowOrb()
+    {
+        if (orbProjectilePrefab != null && throwSpawnPoint != null)
+        {
+            // Remove the orb from inventory data so you can only throw it once
+            hasGreenOrbInInventory = false;
+
+            // Turns off the visual inventory slot icon automatically
+            if (inventoryOrbSlot != null)
+            {
+                inventoryOrbSlot.SetActive(false);
+            }
+
+            // 1. Spawn and throw the physical orb out into the world visually
+            GameObject thrownOrb = Instantiate(orbProjectilePrefab, throwSpawnPoint.position, throwSpawnPoint.rotation);
+            OrbFly projectileScript = thrownOrb.GetComponent<OrbFly>();
+            if (projectileScript != null)
+            {
+                projectileScript.Launch(throwSpawnPoint.forward);
+            }
+
+            // 2. NEW METHOD: Instantly find the portal plane and activate it if close enough
+            PortalPlane portal = FindObjectOfType<PortalPlane>();
+            if (portal != null)
+            {
+                // Calculate the distance between the player and the portal plane
+                float distanceToPortal = Vector3.Distance(transform.position, portal.transform.position);
+
+                // If you are within 15 units of the portal, it activates automatically!
+                if (distanceToPortal <= 15f)
+                {
+                    portal.TurnPlaneGreen();
+                }
+                else
+                {
+                    Debug.Log("Orb thrown, but player is too far away from the portal to activate it. Distance: " + distanceToPortal);
+                }
+            }
+        }
     }
 }
