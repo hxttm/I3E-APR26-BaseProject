@@ -66,7 +66,9 @@ public class FallDamage : MonoBehaviour
                     if (UIManager.Instance != null)
                     {
                         string roundedDistance = fallDistance.ToString("G3");
-                        UIManager.Instance.ShowFallWarning("u fell " + roundedDistance + "m! drop was too high");
+                        
+                        // --- UPDATED FOR TWO LINES USING \n ---
+                        UIManager.Instance.ShowFallWarning("u fell " + roundedDistance + "m!\ndrop was too high");
                     }
                 }
                 wasInAir = false;

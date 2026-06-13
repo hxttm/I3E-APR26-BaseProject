@@ -27,6 +27,14 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("Inventory States")]
     public bool hasWingsInInventory = false; 
+    public bool hasGreenOrbInInventory = false; 
+
+    [Header("Throw Settings")]
+    public GameObject orbProjectilePrefab; // Drag your 3D Orb prefab with the OrbProjectile script here
+    public Transform throwSpawnPoint;       // Drag your Main Camera here
+    
+    // --- ADDED THIS SLOT SO THE PLAYER CAN TURN IT OFF WHEN THROWN ---
+    public GameObject inventoryOrbSlot;     // Drag your UI Inventory Orb Image slot here
 
     void Start()
     {
@@ -35,6 +43,40 @@ public class PlayerHealth : MonoBehaviour
         UpdateHealthUI();
 
         regenCoroutine = StartCoroutine(RegenerateHealthRoutine());
+    }
+
+    void Update()
+    {
+        // If the player has the orb and presses T, throw it!
+        if (hasGreenOrbInInventory && Input.GetKeyDown(KeyCode.T))
+        {
+            ThrowOrb();
+        }
+    }
+
+    private void ThrowOrb()
+    {
+        if (orbProjectilePrefab != null && throwSpawnPoint != null)
+        {
+            // Remove the orb from inventory data so you can only throw it once
+            hasGreenOrbInInventory = false;
+
+            // --- TURNS OFF THE VISUAL ICON AUTOMATICALLY ON THROW ---
+            if (inventoryOrbSlot != null)
+            {
+                inventoryOrbSlot.SetActive(false);
+            }
+
+            // Spawn the orb at the camera position
+            GameObject thrownOrb = Instantiate(orbProjectilePrefab, throwSpawnPoint.position, throwSpawnPoint.rotation);
+            
+            // Launch it straight forward from where the camera is looking
+            OrbProjectile projectileScript = thrownOrb.GetComponent<OrbProjectile>();
+            if (projectileScript != null)
+            {
+                projectileScript.Launch(throwSpawnPoint.forward);
+            }
+        }
     }
 
     private void InitializeHearts()
@@ -82,7 +124,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    // --- REGEN ROUTINE WITH ON-SCREEN MESSAGE ---
     private IEnumerator RegenerateHealthRoutine()
     {
         while (!isDead)
@@ -96,7 +137,6 @@ public class PlayerHealth : MonoBehaviour
                 
                 UpdateHealthUI();
 
-                // --- SEND MESSAGE TO YOUR GAME SCREEN ---
                 if (UIManager.Instance != null)
                 {
                     UIManager.Instance.ShowFallWarning("time passed, wounds healed");
@@ -127,6 +167,12 @@ public class PlayerHealth : MonoBehaviour
     {
         hasWingsInInventory = true;
         Debug.Log("Wings added to inventory! PlayerFlight script is now unlocked.");
+    }
+
+    public void UnlockPortalOrb()
+    {
+        hasGreenOrbInInventory = true;
+        Debug.Log("Magical Green Orb added to inventory! Portal access is now available.");
     }
 
     private void Die()
